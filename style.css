@@ -1,31 +1,312 @@
+/* Europass-style CV layout */
+
+* {
+    box-sizing: border-box;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-    padding: 20px;
-    background-color: #f4f4f4;
-    text-align: center;
-}
-
-header {
-    background: #333;
-    color: white;
-    padding: 20px;
-    border-radius: 8px;
-}
-
-h1 {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
     margin: 0;
+    padding: 24px;
+    background-color: #e8e8e8;
+    color: #1a1a1a;
+    line-height: 1.55;
 }
 
-h2 {
+.cv {
+    max-width: 780px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 40px 48px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+@media print {
+    body {
+        background: #fff;
+        padding: 0;
+    }
+    .cv {
+        box-shadow: none;
+        padding: 24px;
+    }
+}
+
+/* Header */
+.cv-header {
+    margin-bottom: 28px;
+}
+
+.cv-header h1 {
+    margin: 0;
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+.header-rule {
+    border: none;
+    border-top: 2px solid #1a1a1a;
+    margin: 12px 0 16px;
+}
+
+.profile-summary {
+    margin-bottom: 16px;
+}
+
+.profile-summary p {
+    margin: 0 0 10px;
+    font-size: 0.95rem;
+}
+
+.profile-summary p:last-of-type {
+    margin-bottom: 0;
+}
+
+.profile-summary .hobbies {
+    margin-top: 10px;
+    font-style: italic;
+    color: #444;
+}
+
+.personal-details {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 2px 16px;
+    margin: 16px 0 0;
+    font-size: 0.9rem;
+}
+
+.personal-details dt {
+    margin: 0;
+    font-weight: 600;
     color: #333;
 }
 
-section {
-    background: white;
-    margin: 20px auto;
-    padding: 20px;
-    max-width: 600px;
-    border-radius: 8px;
-    box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+.personal-details dd {
+    margin: 0;
+    color: #555;
+}
+
+/* Sections */
+.cv-section {
+    margin-bottom: 28px;
+}
+
+.cv-section:last-of-type {
+    margin-bottom: 0;
+}
+
+.cv-section h2 {
+    margin: 0 0 12px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-transform: none;
+    letter-spacing: 0.02em;
+    color: #1a1a1a;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 6px;
+}
+
+.cv-section p,
+.cv-section ul {
+    margin: 0 0 10px;
+    font-size: 0.95rem;
+}
+
+.cv-section ul {
+    padding-left: 1.25rem;
+}
+
+.cv-section li {
+    margin-bottom: 4px;
+}
+
+/* Contact */
+.contact-section .contact-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.contact-section .contact-list li {
+    margin-bottom: 6px;
+}
+
+.contact-section a {
+    color: #0a66c2;
+    text-decoration: none;
+}
+
+.contact-section a:hover {
+    text-decoration: underline;
+}
+
+/* Work experience */
+.work-item {
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.work-item:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.work-item .employer {
+    margin: 0 0 2px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1a1a1a;
+}
+
+.work-item .location {
+    margin: 0 0 8px;
+    font-size: 0.875rem;
+    color: #555;
+}
+
+.work-item .location a {
+    color: #0a66c2;
+    text-decoration: none;
+}
+
+.work-item .location a:hover {
+    text-decoration: underline;
+}
+
+.role-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 6px;
+}
+
+.role-header strong {
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.role-header .date {
+    font-size: 0.875rem;
+    color: #555;
+    white-space: nowrap;
+}
+
+.work-item .dept {
+    margin: 0 0 10px;
+    font-size: 0.875rem;
+    color: #555;
+}
+
+.work-item p,
+.work-item ul {
+    margin: 0 0 10px;
+}
+
+.work-item ul {
+    padding-left: 1.25rem;
+}
+
+.work-item em {
+    font-style: italic;
+    color: #444;
+}
+
+/* Education */
+.edu-item {
+    margin-bottom: 20px;
+}
+
+.edu-item:last-child {
+    margin-bottom: 0;
+}
+
+.edu-item .institution {
+    margin: 0 0 2px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1a1a1a;
+}
+
+.edu-item .location {
+    margin: 0 0 8px;
+    font-size: 0.875rem;
+    color: #555;
+}
+
+.edu-item .location a {
+    color: #0a66c2;
+    text-decoration: none;
+}
+
+.edu-note {
+    margin: 8px 0 0 !important;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+/* Sub-headings (e.g. Mother tongue, Other language(s)) */
+.sub-head {
+    margin: 14px 0 6px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #333;
+}
+
+/* Language table */
+.lang-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    margin-top: 8px;
+}
+
+.lang-table th,
+.lang-table td {
+    border: 1px solid #ddd;
+    padding: 8px 10px;
+    text-align: left;
+}
+
+.lang-table th {
+    background: #f5f5f5;
+    font-weight: 600;
+    color: #333;
+}
+
+.lang-table tbody tr:nth-child(even) {
+    background: #fafafa;
+}
+
+@media (max-width: 600px) {
+    .lang-table {
+        font-size: 0.8rem;
+    }
+    .lang-table th,
+    .lang-table td {
+        padding: 6px 8px;
+    }
+}
+
+/* Profile note (Europass link) */
+.profile-note {
+    margin-top: 28px !important;
+    padding-top: 16px;
+    border-top: 1px solid #eee;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.profile-note a {
+    color: #0a66c2;
+    text-decoration: none;
+}
+
+.profile-note a:hover {
+    text-decoration: underline;
 }
