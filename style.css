@@ -155,6 +155,58 @@ body {
     border-bottom: none;
 }
 
+/* Expandable summary (always visible) */
+.work-summary {
+    cursor: pointer;
+    position: relative;
+    padding-right: 28px;
+    user-select: none;
+    outline: none;
+}
+
+.work-summary:hover {
+    color: #0a66c2;
+}
+
+.work-summary:hover .work-toggle {
+    border-left-color: #0a66c2;
+}
+
+.work-summary:focus .work-toggle {
+    border-left-color: #0a66c2;
+}
+
+/* Chevron: collapsed = right (▶), expanded = down (▼) */
+.work-toggle {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 6px solid #666;
+    margin-top: -2px;
+    transition: transform 0.2s ease;
+}
+
+.work-item.is-expanded .work-toggle {
+    transform: translateY(-50%) rotate(90deg);
+}
+
+/* Collapsible details (hidden by default) */
+.work-details {
+    display: none;
+    padding-top: 12px;
+    margin-top: 4px;
+    border-top: 1px solid #eee;
+}
+
+.work-item.is-expanded .work-details {
+    display: block;
+}
+
 .work-item .employer {
     margin: 0 0 2px;
     font-size: 1rem;
