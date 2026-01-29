@@ -13,18 +13,196 @@ body {
     line-height: 1.55;
 }
 
-.cv {
-    max-width: 780px;
+.page-wrapper {
+    display: flex;
+    gap: 24px;
+    max-width: 1180px;
     margin: 0 auto;
+    align-items: flex-start;
+}
+
+/* Left: LinkedIn profile photo */
+.profile-photo {
+    flex-shrink: 0;
+    position: sticky;
+    top: 24px;
+}
+
+.profile-photo-link {
+    display: block;
+    line-height: 0;
+}
+
+.profile-photo-img {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+}
+
+.profile-photo-link:hover .profile-photo-img {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+}
+
+.cv {
+    flex: 1;
+    min-width: 0;
+    max-width: 780px;
     background: #fff;
     padding: 40px 48px;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Sidebar */
+.sidebar {
+    width: 260px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 24px;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.sidebar-block {
+    margin-bottom: 20px;
+}
+
+.sidebar-block:last-child {
+    margin-bottom: 0;
+}
+
+.sidebar-title {
+    margin: 0 0 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #666;
+}
+
+.sidebar-time-value {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.sidebar-weather-value {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #333;
+}
+
+.sidebar-link {
+    display: block;
+    padding: 10px 14px;
+    background: #0a66c2;
+    color: #fff;
+    text-align: center;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 6px;
+    transition: background 0.2s;
+}
+
+.sidebar-link:hover {
+    background: #004182;
+}
+
+@media (max-width: 900px) {
+    .page-wrapper {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .profile-photo {
+        position: static;
+        text-align: center;
+        margin-bottom: 8px;
+    }
+    .profile-photo-img {
+        width: 120px;
+        height: 120px;
+    }
+
+    .cv {
+        max-width: none;
+    }
+
+    .sidebar {
+        width: 100%;
+        position: static;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+
+    .sidebar-block.sidebar-cta {
+        grid-column: 1 / -1;
+    }
+}
+
+@media print {
+    .profile-photo,
+    .sidebar,
+    .logo-strip {
+        display: none;
+    }
+}
+
+/* Subtle scrolling logo strip */
+.logo-strip {
+    padding: 16px 24px;
+    background: rgba(0, 0, 0, 0.03);
+    overflow: hidden;
+    max-width: 520px;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 8px;
+}
+
+.logo-strip:first-of-type {
+    margin-top: 0;
+    margin-bottom: 24px;
+}
+
+.logo-strip-bottom {
+    margin-top: 32px;
+}
+
+.logo-strip-inner {
+    display: flex;
+    align-items: center;
+    gap: 48px;
+    width: max-content;
+    animation: logo-scroll 40s linear infinite;
+}
+
+.logo-strip-inner img {
+    height: 36px;
+    width: auto;
+    max-width: 80px;
+    object-fit: contain;
+    opacity: 0.5;
+    flex-shrink: 0;
+}
+
+@keyframes logo-scroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
 }
 
 @media print {
     body {
         background: #fff;
         padding: 0;
+    }
+    .page-wrapper {
+        max-width: none;
     }
     .cv {
         box-shadow: none;

@@ -7,6 +7,32 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="logo-strip" aria-hidden="true">
+        <div class="logo-strip-inner">
+            <img src="logos/tma.png" alt="" width="80" height="36">
+            <img src="logos/trustly.png" alt="" width="80" height="36">
+            <img src="logos/gig.png" alt="" width="80" height="36">
+            <img src="logos/netent.jpg" alt="" width="80" height="36">
+            <img src="logos/ra.jpg" alt="" width="80" height="36">
+            <img src="logos/rcg.jpg.png" alt="" width="80" height="36">
+            <img src="logos/rp.jpg" alt="" width="80" height="36">
+            <img src="logos/Vascas-Logo-.jpg" alt="" width="80" height="36">
+            <img src="logos/tma.png" alt="" width="80" height="36">
+            <img src="logos/trustly.png" alt="" width="80" height="36">
+            <img src="logos/gig.png" alt="" width="80" height="36">
+            <img src="logos/netent.jpg" alt="" width="80" height="36">
+            <img src="logos/ra.jpg" alt="" width="80" height="36">
+            <img src="logos/rcg.jpg.png" alt="" width="80" height="36">
+            <img src="logos/rp.jpg" alt="" width="80" height="36">
+            <img src="logos/Vascas-Logo-.jpg" alt="" width="80" height="36">
+        </div>
+    </div>
+    <div class="page-wrapper">
+    <aside class="profile-photo" aria-label="Profile photo">
+        <a href="https://www.linkedin.com/in/stevecutajar/" target="_blank" rel="noopener" class="profile-photo-link">
+            <img src="profile.jpg" alt="Steve Cutajar" class="profile-photo-img" width="160" height="160">
+        </a>
+    </aside>
     <div class="cv">
         <header class="cv-header">
             <h1>Steve Cutajar</h1>
@@ -256,6 +282,43 @@
 
         <p class="profile-note">Profile structure and content based on <a href="https://europa.eu/europass/eportfolio/api/eprofile/shared-profile/steve-cutajar/e5c6a78c-1d88-43c8-b5fa-6e8aeda1a007?view=html" target="_blank" rel="noopener">Europass shared profile</a>. Profile will be available until 27 July 2026.</p>
     </div>
+
+    <aside class="sidebar" aria-label="Sidebar">
+        <div class="sidebar-block sidebar-time">
+            <h3 class="sidebar-title">Malta time</h3>
+            <p class="sidebar-time-value" id="malta-time" aria-live="polite">--:--</p>
+        </div>
+        <div class="sidebar-block sidebar-weather">
+            <h3 class="sidebar-title">Weather · Malta</h3>
+            <p class="sidebar-weather-value" id="malta-weather" aria-live="polite">Loading…</p>
+        </div>
+        <div class="sidebar-block sidebar-cta">
+            <a href="https://www.linkedin.com/in/stevecutajar/" class="sidebar-link" target="_blank" rel="noopener">Let's connect on LinkedIn</a>
+        </div>
+    </aside>
+    </div>
+
+    <div class="logo-strip logo-strip-bottom" aria-hidden="true">
+        <div class="logo-strip-inner">
+            <img src="logos/tma.png" alt="" width="80" height="36">
+            <img src="logos/trustly.png" alt="" width="80" height="36">
+            <img src="logos/gig.png" alt="" width="80" height="36">
+            <img src="logos/netent.jpg" alt="" width="80" height="36">
+            <img src="logos/ra.jpg" alt="" width="80" height="36">
+            <img src="logos/rcg.jpg.png" alt="" width="80" height="36">
+            <img src="logos/rp.jpg" alt="" width="80" height="36">
+            <img src="logos/Vascas-Logo-.jpg" alt="" width="80" height="36">
+            <img src="logos/tma.png" alt="" width="80" height="36">
+            <img src="logos/trustly.png" alt="" width="80" height="36">
+            <img src="logos/gig.png" alt="" width="80" height="36">
+            <img src="logos/netent.jpg" alt="" width="80" height="36">
+            <img src="logos/ra.jpg" alt="" width="80" height="36">
+            <img src="logos/rcg.jpg.png" alt="" width="80" height="36">
+            <img src="logos/rp.jpg" alt="" width="80" height="36">
+            <img src="logos/Vascas-Logo-.jpg" alt="" width="80" height="36">
+        </div>
+    </div>
+
     <script>
         document.querySelectorAll('.work-summary').forEach(function (summary) {
             summary.addEventListener('click', function (e) {
@@ -271,6 +334,32 @@
                 }
             });
         });
+
+        (function () {
+            var timeEl = document.getElementById('malta-time');
+            if (timeEl) {
+                function updateTime() {
+                    var now = new Date();
+                    timeEl.textContent = now.toLocaleTimeString('en-GB', { timeZone: 'Europe/Malta', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                }
+                updateTime();
+                setInterval(updateTime, 1000);
+            }
+
+            var weatherEl = document.getElementById('malta-weather');
+            if (weatherEl) {
+                fetch('https://api.open-meteo.com/v1/forecast?latitude=35.8997&longitude=14.5147&current=temperature_2m,weather_code&timezone=Europe/Malta')
+                    .then(function (r) { return r.json(); })
+                    .then(function (data) {
+                        var temp = data.current && data.current.temperature_2m;
+                        var code = data.current && data.current.weather_code;
+                        var desc = code === 0 ? 'Clear' : code <= 3 ? 'Cloudy' : code <= 49 ? 'Fog' : code <= 67 ? 'Rain' : code <= 82 ? 'Snow' : 'Thunder';
+                        weatherEl.textContent = (temp != null ? Math.round(temp) + '°C · ' : '') + desc;
+                    })
+                    .catch(function () { weatherEl.textContent = '—'; });
+            }
+
+        })();
     </script>
 </body>
 </html>
