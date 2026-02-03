@@ -58,9 +58,12 @@
             </ul>
         </section>
 
-        <section class="cv-section">
-            <h2>Work experience</h2>
-
+        <section class="cv-section cv-section-collapsible">
+            <div class="section-summary" role="button" tabindex="0" aria-expanded="false">
+                <h2>Work experience</h2>
+                <span class="section-toggle" aria-hidden="true"></span>
+            </div>
+            <div class="section-details">
             <article class="work-item">
                 <div class="work-summary" role="button" tabindex="0" aria-expanded="false">
                     <h3 class="employer">The Mill Adventure</h3>
@@ -69,7 +72,6 @@
                         <strong>Lead Partner Integrations Manager</strong>
                         <span class="date">01/2024 – Current</span>
                     </div>
-                    <p class="dept">iGaming – Partner Integrations · Information and communication</p>
                     <span class="work-toggle" aria-hidden="true"></span>
                 </div>
                 <div class="work-details">
@@ -123,7 +125,7 @@
                     <h3 class="employer">Trustly</h3>
                     <p class="location">Sliema, Malta</p>
                     <div class="role-header">
-                        <strong>Technical Integration Specialist</strong>
+                        <strong>Integration Specialist – Gaming</strong>
                         <span class="date">05/2018 – 27/02/2021</span>
                     </div>
                     <span class="work-toggle" aria-hidden="true"></span>
@@ -200,10 +202,15 @@
                 <p>Working with online casino studios, building and setting up high quality apparatus to make state of the art studios for global clients.</p>
                 </div>
             </article>
+            </div>
         </section>
 
-        <section class="cv-section">
-            <h2>Education and training</h2>
+        <section class="cv-section cv-section-collapsible">
+            <div class="section-summary" role="button" tabindex="0" aria-expanded="false">
+                <h2>Education and training</h2>
+                <span class="section-toggle" aria-hidden="true"></span>
+            </div>
+            <div class="section-details">
             <article class="edu-item">
                 <h3 class="institution">Malta Business School</h3>
                 <p class="location">Birkirkara, Malta · <a href="https://mbs.edu.mt/" target="_blank" rel="noopener">mbs.edu.mt</a></p>
@@ -221,10 +228,15 @@
                 </div>
                 <p class="edu-note">This ICT Diploma is fully recognized internationally and holds an EQF (European Qualifications Framework) Level 5 which is equivalent to two years of a University Degree and locally by MQIRC. The diploma is covered over a period of 2 academic years on a part time basis.</p>
             </article>
+            </div>
         </section>
 
-        <section class="cv-section">
-            <h2>Language skills</h2>
+        <section class="cv-section cv-section-collapsible">
+            <div class="section-summary" role="button" tabindex="0" aria-expanded="false">
+                <h2>Language skills</h2>
+                <span class="section-toggle" aria-hidden="true"></span>
+            </div>
+            <div class="section-details">
             <h3 class="sub-head">Mother tongue(s)</h3>
             <p><strong>Maltese</strong></p>
             <h3 class="sub-head">Other language(s)</h3>
@@ -258,26 +270,48 @@
                     </tr>
                 </tbody>
             </table>
+            </div>
         </section>
 
-        <section class="cv-section">
-            <h2>Job-related skills</h2>
+        <section class="cv-section cv-section-collapsible">
+            <div class="section-summary" role="button" tabindex="0" aria-expanded="false">
+                <h2>Job-related skills</h2>
+                <span class="section-toggle" aria-hidden="true"></span>
+            </div>
+            <div class="section-details">
+            <ul>
+                <li>AWS, parameter store files modifications and upkeep</li>
+                <li>Log search, script triggers</li>
+                <li>Cursor AI, Postman, GQL</li>
+                <li>MySQL, Postgres</li>
+            </ul>
+            </div>
+        </section>
+
+        <section class="cv-section cv-section-collapsible">
+            <div class="section-summary" role="button" tabindex="0" aria-expanded="false">
+                <h2>Organisational skills</h2>
+                <span class="section-toggle" aria-hidden="true"></span>
+            </div>
+            <div class="section-details">
             <ul>
                 <li>Eye for detail, knowing what the product should deliver</li>
                 <li>Guiding merchants through issues by understanding their systems and thus be able to suggest possible workarounds or fixes</li>
                 <li>Know how to tackle issues and take charge of irregular scenarios even if it's out of the team scope but ultimately to the benefit of the company</li>
             </ul>
-        </section>
-
-        <section class="cv-section">
-            <h2>Organisational skills</h2>
             <p>Passionate about documenting key knowledge obtained and motivating a positive framework towards knowledge sharing amongst teams and stakeholders. Firm believer in identifying potential processes and improve on key take aways. All while leaning towards practicality.</p>
+            </div>
         </section>
 
-        <section class="cv-section">
-            <h2>Communication and interpersonal skills</h2>
+        <section class="cv-section cv-section-collapsible">
+            <div class="section-summary" role="button" tabindex="0" aria-expanded="false">
+                <h2>Communication and interpersonal skills</h2>
+                <span class="section-toggle" aria-hidden="true"></span>
+            </div>
+            <div class="section-details">
             <p>My current position gives me the opportunity to discuss with both commercial oriented personnel as well as technical personnel, sometimes in the same meeting. Being keen in understanding the product inside-out aids in believing in the product and its capabilities, which in turn provides the capability to drive any type of audience to the appropriate solution against top guidelines.</p>
             <p>Of course there may also be some challenging projects were the merchant may require multiple meetings before the goal is reached, but this makes the finish line that much sweeter to reach.</p>
+            </div>
         </section>
 
     </div>
@@ -324,6 +358,21 @@
                 if (e.target.closest('a')) return;
                 var item = this.closest('.work-item');
                 var expanded = item.classList.toggle('is-expanded');
+                this.setAttribute('aria-expanded', expanded);
+            });
+            summary.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    this.click();
+                }
+            });
+        });
+
+        document.querySelectorAll('.cv-section-collapsible .section-summary').forEach(function (summary) {
+            summary.addEventListener('click', function (e) {
+                if (e.target.closest('a')) return;
+                var section = this.closest('.cv-section-collapsible');
+                var expanded = section.classList.toggle('is-expanded');
                 this.setAttribute('aria-expanded', expanded);
             });
             summary.addEventListener('keydown', function (e) {
