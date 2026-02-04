@@ -619,10 +619,20 @@
             if (hasPrintParam()) {
                 document.body.classList.add('cv-print-mode');
                 var qrUrl = 'https://stevecutajar.com';
+                var qrImgUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=' + encodeURIComponent(qrUrl);
                 var qrBlock = document.createElement('div');
                 qrBlock.className = 'cv-pdf-qr-block';
-                qrBlock.innerHTML = '<img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&amp;data=' + encodeURIComponent(qrUrl) + '" alt="QR code: ' + qrUrl + '" width="120" height="120" class="cv-pdf-qr-img">' +
-                    '<p class="cv-pdf-qr-text">SCAN to view online version</p>';
+                var qrImg = document.createElement('img');
+                qrImg.src = qrImgUrl;
+                qrImg.alt = 'QR code: ' + qrUrl;
+                qrImg.width = 120;
+                qrImg.height = 120;
+                qrImg.className = 'cv-pdf-qr-img';
+                var qrText = document.createElement('p');
+                qrText.className = 'cv-pdf-qr-text';
+                qrText.textContent = 'SCAN to view online version';
+                qrBlock.appendChild(qrImg);
+                qrBlock.appendChild(qrText);
                 var cvEl = document.querySelector('.cv');
                 if (cvEl) cvEl.appendChild(qrBlock);
                 document.querySelectorAll('.cv-section-collapsible').forEach(function (el) {
@@ -640,7 +650,17 @@
                     document.body.classList.remove('cv-print-mode');
                     if (cvEl && qrBlock.parentNode) qrBlock.parentNode.removeChild(qrBlock);
                 };
-                setTimeout(function () { window.print(); }, 300);
+                function doPrint() { window.print(); }
+                var printScheduled = false;
+                qrImg.onload = function () {
+                    if (!printScheduled) { printScheduled = true; setTimeout(doPrint, 100); }
+                };
+                qrImg.onerror = function () {
+                    if (!printScheduled) { printScheduled = true; setTimeout(doPrint, 100); }
+                };
+                setTimeout(function () {
+                    if (!printScheduled) { printScheduled = true; doPrint(); }
+                }, 2500);
             }
         })();
     </script>
