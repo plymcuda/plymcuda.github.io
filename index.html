@@ -524,20 +524,35 @@
         (function () {
             var themeBtn = document.querySelector('.theme-toggle');
             var html = document.documentElement;
-            function getTheme() { return localStorage.getItem('theme') || 'light'; }
+            var STORAGE_KEY = 'theme';
+            function getStoredTheme() { return localStorage.getItem(STORAGE_KEY); }
+            function getTheme() {
+                var stored = getStoredTheme();
+                if (stored === 'dark' || stored === 'light') return stored;
+                return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
             function setTheme(theme) {
                 if (theme === 'dark') {
                     html.setAttribute('data-theme', 'dark');
                 } else {
                     html.removeAttribute('data-theme');
                 }
-                localStorage.setItem('theme', theme);
+                localStorage.setItem(STORAGE_KEY, theme);
+            }
+            var lastToggle = 0;
+            function toggleTheme() {
+                var now = Date.now();
+                if (now - lastToggle < 400) return;
+                lastToggle = now;
+                setTheme(getTheme() === 'dark' ? 'light' : 'dark');
             }
             if (themeBtn) {
                 setTheme(getTheme());
-                themeBtn.addEventListener('click', function () {
-                    setTheme(getTheme() === 'dark' ? 'light' : 'dark');
-                });
+                themeBtn.addEventListener('click', toggleTheme);
+                themeBtn.addEventListener('touchend', function (e) {
+                    e.preventDefault();
+                    toggleTheme();
+                }, { passive: false });
             }
 
             var backToTop = document.querySelector('.back-to-top');
@@ -565,16 +580,13 @@
             }
             if (hasPrintParam()) {
                 document.body.classList.add('cv-print-mode');
-                var qrWrap = document.getElementById('cv-pdf-qr-wrap');
                 var qrUrl = 'https://stevecutajar.com';
-                if (qrWrap) {
-                    qrWrap.hidden = false;
-                    qrWrap.setAttribute('aria-hidden', 'false');
-                    qrWrap.innerHTML = '<div class="cv-pdf-qr-block">' +
-                        '<img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&amp;data=' + encodeURIComponent(qrUrl) + '" alt="" width="120" height="120" class="cv-pdf-qr-img">' +
-                        '<p class="cv-pdf-qr-text">Scan to view this CV online</p>' +
-                        '</div>';
-                }
+                var qrBlock = document.createElement('div');
+                qrBlock.className = 'cv-pdf-qr-block';
+                qrBlock.innerHTML = '<img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&amp;data=' + encodeURIComponent(qrUrl) + '" alt="QR code: ' + qrUrl + '" width="120" height="120" class="cv-pdf-qr-img">' +
+                    '<p class="cv-pdf-qr-text">SCAN to view online version</p>';
+                var cvEl = document.querySelector('.cv');
+                if (cvEl) cvEl.appendChild(qrBlock);
                 document.querySelectorAll('.cv-section-collapsible').forEach(function (el) {
                     el.classList.add('is-expanded');
                     var sum = el.querySelector('.section-summary');
@@ -588,7 +600,7 @@
                 window.onafterprint = function () {
                     history.replaceState(null, '', window.location.pathname + window.location.search.replace(/[?&]print=1&?|&?print=1/, '').replace(/\?$/, '') || window.location.pathname);
                     document.body.classList.remove('cv-print-mode');
-                    if (qrWrap) { qrWrap.hidden = true; qrWrap.setAttribute('aria-hidden', 'true'); qrWrap.innerHTML = ''; }
+                    if (cvEl && qrBlock.parentNode) qrBlock.parentNode.removeChild(qrBlock);
                 };
                 setTimeout(function () { window.print(); }, 300);
             }
