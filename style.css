@@ -1322,4 +1322,16 @@ body.cv-print-mode .cv-pdf-qr-wrap {
     .cv-pdf-qr-wrap:not(:empty) {
         display: block !important;
     }
+    .cv-pdf-qr-block {
+        display: block !important;
+        visibility: visible !important;
+        page-break-inside: avoid;
+        min-height: 1px;
+    }
+    .cv-pdf-qr-img {
+        display: block !important;
+        visibility: visible !important;
+        min-width: 120px;
+        min-height: 120px;
+    }
 }

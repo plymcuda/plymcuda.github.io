@@ -623,7 +623,6 @@
                 var qrBlock = document.createElement('div');
                 qrBlock.className = 'cv-pdf-qr-block';
                 var qrImg = document.createElement('img');
-                qrImg.src = qrImgUrl;
                 qrImg.alt = 'QR code: ' + qrUrl;
                 qrImg.width = 120;
                 qrImg.height = 120;
@@ -652,15 +651,31 @@
                 };
                 function doPrint() { window.print(); }
                 var printScheduled = false;
-                qrImg.onload = function () {
-                    if (!printScheduled) { printScheduled = true; setTimeout(doPrint, 100); }
-                };
-                qrImg.onerror = function () {
-                    if (!printScheduled) { printScheduled = true; setTimeout(doPrint, 100); }
-                };
+                function schedulePrint() {
+                    if (!printScheduled) { printScheduled = true; setTimeout(doPrint, 150); }
+                }
+                qrImg.onload = schedulePrint;
+                qrImg.onerror = schedulePrint;
+                /* Embed QR as data URL so it prints reliably on mobile (no network during print) */
+                fetch(qrImgUrl, { mode: 'cors' })
+                    .then(function (r) { return r.ok ? r.blob() : Promise.reject(new Error('fetch')); })
+                    .then(function (blob) {
+                        return new Promise(function (resolve, reject) {
+                            var reader = new FileReader();
+                            reader.onloadend = function () { resolve(reader.result); };
+                            reader.onerror = reject;
+                            reader.readAsDataURL(blob);
+                        });
+                    })
+                    .then(function (dataUrl) {
+                        qrImg.src = dataUrl;
+                    })
+                    .catch(function () {
+                        qrImg.src = qrImgUrl;
+                    });
                 setTimeout(function () {
                     if (!printScheduled) { printScheduled = true; doPrint(); }
-                }, 2500);
+                }, 4000);
             }
         })();
     </script>
