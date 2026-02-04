@@ -3,12 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Steve Cutajar | Europass Profile</title>
+    <title>Steve Cutajar | Lead Partner Integration Specialist · CV</title>
+    <meta name="description" content="Steve Cutajar – Lead Partner Integration Specialist. Technical documentation, process improvement. Based in Malta. Work experience in iGaming, integrations, and partner onboarding.">
+    <meta property="og:title" content="Steve Cutajar | CV">
+    <meta property="og:description" content="Lead Partner Integration Specialist. Technical documentation, process improvement. Based in Malta.">
+    <meta property="og:type" content="website">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="theme-toggle-wrap">
+        <button type="button" class="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode"></button>
+    </div>
     <div class="logo-strip" aria-hidden="true">
         <div class="logo-strip-inner">
+            <div class="logo-strip-track">
             <img src="logos/tma.png" alt="" width="80" height="36">
             <img src="logos/trustly.png" alt="" width="80" height="36">
             <img src="logos/gig.png" alt="" width="80" height="36">
@@ -17,6 +28,9 @@
             <img src="logos/rcg.jpg.png" alt="" width="80" height="36">
             <img src="logos/rp.jpg" alt="" width="80" height="36">
             <img src="logos/Vascas-Logo-.jpg" alt="" width="80" height="36">
+            <img src="logos/aws.png" alt="" width="80" height="36">
+            <img src="logos/gql.png" alt="" width="80" height="36">
+            <img src="logos/postman.png" alt="" width="80" height="36">
             <img src="logos/tma.png" alt="" width="80" height="36">
             <img src="logos/trustly.png" alt="" width="80" height="36">
             <img src="logos/gig.png" alt="" width="80" height="36">
@@ -25,8 +39,13 @@
             <img src="logos/rcg.jpg.png" alt="" width="80" height="36">
             <img src="logos/rp.jpg" alt="" width="80" height="36">
             <img src="logos/Vascas-Logo-.jpg" alt="" width="80" height="36">
+            <img src="logos/aws.png" alt="" width="80" height="36">
+            <img src="logos/gql.png" alt="" width="80" height="36">
+            <img src="logos/postman.png" alt="" width="80" height="36">
+            </div>
         </div>
     </div>
+    <main id="main-content" class="main-content">
     <div class="page-wrapper">
     <aside class="profile-photo" aria-label="Profile photo">
         <a href="https://www.linkedin.com/in/stevecutajar/" target="_blank" rel="noopener" class="profile-photo-link">
@@ -324,11 +343,28 @@
         <div class="sidebar-block sidebar-cta">
             <a href="https://www.linkedin.com/in/stevecutajar/" class="sidebar-link" target="_blank" rel="noopener">Let's connect on LinkedIn</a>
         </div>
+        <div class="sidebar-block sidebar-pdf">
+            <a href="#" id="cv-pdf-link" class="sidebar-link sidebar-link-pdf">Download CV (PDF)</a>
+        </div>
+        <div class="sidebar-block sidebar-demos">
+            <a href="#api-demos" class="sidebar-link sidebar-link-subtle">Try API demos</a>
+        </div>
     </aside>
     </div>
+    <div id="cv-pdf-qr-wrap" class="cv-pdf-qr-wrap" aria-hidden="true" hidden></div>
+
+    <section class="demos-section" id="api-demos" aria-labelledby="demos-heading">
+        <div class="demos-section-inner">
+            <h2 id="demos-heading" class="demos-heading">API &amp; integration demos</h2>
+            <p class="demos-intro">Dear user, thanks for visiting this link. Here are some demos for you to try — simple interactions you can trigger and explore. See if you can understand what&rsquo;s going on.</p>
+            <p class="demos-summary">Click &ldquo;Run request&rdquo; to call live APIs (REST and GraphQL). Each demo shows the request and response.</p>
+            <div id="demos-container" class="demos-container"></div>
+        </div>
+    </section>
 
     <div class="logo-strip logo-strip-bottom" aria-hidden="true">
         <div class="logo-strip-inner">
+            <div class="logo-strip-track">
             <img src="logos/tma.png" alt="" width="80" height="36">
             <img src="logos/trustly.png" alt="" width="80" height="36">
             <img src="logos/gig.png" alt="" width="80" height="36">
@@ -337,6 +373,9 @@
             <img src="logos/rcg.jpg.png" alt="" width="80" height="36">
             <img src="logos/rp.jpg" alt="" width="80" height="36">
             <img src="logos/Vascas-Logo-.jpg" alt="" width="80" height="36">
+            <img src="logos/aws.png" alt="" width="80" height="36">
+            <img src="logos/gql.png" alt="" width="80" height="36">
+            <img src="logos/postman.png" alt="" width="80" height="36">
             <img src="logos/tma.png" alt="" width="80" height="36">
             <img src="logos/trustly.png" alt="" width="80" height="36">
             <img src="logos/gig.png" alt="" width="80" height="36">
@@ -345,10 +384,52 @@
             <img src="logos/rcg.jpg.png" alt="" width="80" height="36">
             <img src="logos/rp.jpg" alt="" width="80" height="36">
             <img src="logos/Vascas-Logo-.jpg" alt="" width="80" height="36">
+            <img src="logos/aws.png" alt="" width="80" height="36">
+            <img src="logos/gql.png" alt="" width="80" height="36">
+            <img src="logos/postman.png" alt="" width="80" height="36">
+            </div>
         </div>
     </div>
 
     <script>
+        (function () {
+            var tracks = document.querySelectorAll('.logo-strip-track');
+            if (!tracks.length) return;
+            var minDur = 20;
+            var maxDur = 60;
+            var defaultDur = 40;
+            var pendingX = null;
+            function setSpeed(x) {
+                var w = window.innerWidth;
+                if (!w) return;
+                var t = Math.max(0, Math.min(1, x / w));
+                var dur = maxDur - t * (maxDur - minDur);
+                tracks.forEach(function (el) { el.style.animationDuration = dur + 's'; });
+            }
+            function onMove(e) {
+                var x = e.touches ? e.touches[0].clientX : e.clientX;
+                pendingX = x;
+            }
+            function onLeave() {
+                pendingX = -1;
+            }
+            function tick() {
+                if (pendingX !== null) {
+                    if (pendingX < 0) {
+                        tracks.forEach(function (el) { el.style.animationDuration = defaultDur + 's'; });
+                    } else {
+                        setSpeed(pendingX);
+                    }
+                    pendingX = null;
+                }
+                requestAnimationFrame(tick);
+            }
+            window.addEventListener('mousemove', onMove, { passive: true });
+            window.addEventListener('mouseleave', onLeave, { passive: true });
+            window.addEventListener('touchmove', onMove, { passive: true });
+            requestAnimationFrame(tick);
+        })();
+
         document.querySelectorAll('.work-summary').forEach(function (summary) {
             summary.addEventListener('click', function (e) {
                 if (e.target.closest('a')) return;
@@ -404,6 +485,81 @@
             }
 
         })();
+
+        (function () {
+            var themeBtn = document.querySelector('.theme-toggle');
+            var html = document.documentElement;
+            function getTheme() { return localStorage.getItem('theme') || 'light'; }
+            function setTheme(theme) {
+                if (theme === 'dark') {
+                    html.setAttribute('data-theme', 'dark');
+                } else {
+                    html.removeAttribute('data-theme');
+                }
+                localStorage.setItem('theme', theme);
+            }
+            if (themeBtn) {
+                setTheme(getTheme());
+                themeBtn.addEventListener('click', function () {
+                    setTheme(getTheme() === 'dark' ? 'light' : 'dark');
+                });
+            }
+
+            var backToTop = document.querySelector('.back-to-top');
+            if (backToTop) {
+                function onScroll() {
+                    backToTop.classList.toggle('visible', window.scrollY > 400);
+                }
+                window.addEventListener('scroll', onScroll, { passive: true });
+                onScroll();
+            }
+        })();
+
+        (function () {
+            var pdfLink = document.getElementById('cv-pdf-link');
+            if (pdfLink) {
+                pdfLink.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    var url = window.location.pathname + (window.location.search ? '&' : '?') + 'print=1';
+                    window.location.href = url;
+                });
+            }
+
+            function hasPrintParam() {
+                return /[?&]print=1(?:&|$)/.test(window.location.search);
+            }
+            if (hasPrintParam()) {
+                document.body.classList.add('cv-print-mode');
+                var qrWrap = document.getElementById('cv-pdf-qr-wrap');
+                var qrUrl = 'https://stevecutajar.com';
+                if (qrWrap) {
+                    qrWrap.hidden = false;
+                    qrWrap.setAttribute('aria-hidden', 'false');
+                    qrWrap.innerHTML = '<div class="cv-pdf-qr-block">' +
+                        '<img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&amp;data=' + encodeURIComponent(qrUrl) + '" alt="" width="120" height="120" class="cv-pdf-qr-img">' +
+                        '<p class="cv-pdf-qr-text">Scan to view this CV online</p>' +
+                        '</div>';
+                }
+                document.querySelectorAll('.cv-section-collapsible').forEach(function (el) {
+                    el.classList.add('is-expanded');
+                    var sum = el.querySelector('.section-summary');
+                    if (sum) sum.setAttribute('aria-expanded', 'true');
+                });
+                document.querySelectorAll('.work-item').forEach(function (el) {
+                    el.classList.add('is-expanded');
+                    var sum = el.querySelector('.work-summary');
+                    if (sum) sum.setAttribute('aria-expanded', 'true');
+                });
+                window.onafterprint = function () {
+                    history.replaceState(null, '', window.location.pathname + window.location.search.replace(/[?&]print=1&?|&?print=1/, '').replace(/\?$/, '') || window.location.pathname);
+                    document.body.classList.remove('cv-print-mode');
+                    if (qrWrap) { qrWrap.hidden = true; qrWrap.setAttribute('aria-hidden', 'true'); qrWrap.innerHTML = ''; }
+                };
+                setTimeout(function () { window.print(); }, 300);
+            }
+        })();
     </script>
+    <script src="js/demos-config.js"></script>
+    <script src="js/app-demos.js"></script>
 </body>
 </html>
