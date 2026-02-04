@@ -25,13 +25,14 @@ window.CV_DEMOS = [
     title: 'REST API (Random quote)',
     description: 'A simple REST request fetching data from an existing database. Returns a random quote — content and author.',
     type: 'rest',
-    url: 'https://api.quotable.io/random',
+    url: 'https://api.quotable.io/quotes/random',
     method: 'GET',
     format: function (data) {
-      if (!data || !data.content) return { text: 'No data', meta: null };
+      var quote = Array.isArray(data) && data.length ? data[0] : data;
+      if (!quote || !quote.content) return { text: 'No data', meta: null };
       return {
-        text: data.content,
-        meta: data.author ? '— ' + data.author : null
+        text: quote.content,
+        meta: quote.author ? '— ' + quote.author : null
       };
     }
   },
