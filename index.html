@@ -35,20 +35,7 @@
     </div>
     <div class="logo-strip" aria-hidden="true">
         <div class="logo-strip-inner">
-            <div class="logo-strip-track">
-            <img src="logos/tma.png" alt="" width="80" height="36">
-            <img src="logos/trustly.png" alt="" width="80" height="36">
-            <img src="logos/gig.png" alt="" width="80" height="36">
-            <img src="logos/netent.jpg" alt="" width="80" height="36">
-            <img src="logos/ra.jpg" alt="" width="80" height="36">
-            <img src="logos/rcg.jpg.png" alt="" width="80" height="36">
-            <img src="logos/rp.jpg" alt="" width="80" height="36">
-            <img src="logos/Vascas-Logo-.jpg" alt="" width="80" height="36">
-            <img src="logos/aws.png" alt="" width="80" height="36">
-            <img src="logos/gql.png" alt="" width="80" height="36">
-            <img src="logos/postman.png" alt="" width="80" height="36">
-            <img src="logos/JIRA.png" alt="" width="80" height="36">
-            <img src="logos/conf.svg" alt="" width="80" height="36">
+            <div class="logo-strip-track" data-logo-strip>
             <img src="logos/tma.png" alt="" width="80" height="36">
             <img src="logos/trustly.png" alt="" width="80" height="36">
             <img src="logos/gig.png" alt="" width="80" height="36">
@@ -87,9 +74,9 @@
             <h2>Contact</h2>
             <ul class="contact-list">
                 <li><strong>LinkedIn:</strong> <a href="https://www.linkedin.com/in/stevecutajar/" target="_blank" rel="noopener">linkedin.com/in/stevecutajar</a></li>
-                <li><strong>Residing at:</strong> Malta</li>
-                <li><strong>Work permit:</strong> Maltese</li>
-                <li><strong>Nationality:</strong> Maltese</li>
+                <li><strong>Residence:</strong> MT <span class="residence-flag" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 8" width="18" height="12" role="img" aria-label="Malta"><rect width="6" height="8" fill="#fff"/><rect x="6" width="6" height="8" fill="#cf142b"/><path fill="none" stroke="#666" stroke-width="0.5" d="M2 1.5h2v1H2zm0 2h2v1H2zm1-2.5v3M1 2.5h4"/></svg></span></li>
+                <li><strong>Work permit:</strong> Maltese · MT <span class="residence-flag" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 8" width="18" height="12" role="img" aria-label="Malta"><rect width="6" height="8" fill="#fff"/><rect x="6" width="6" height="8" fill="#cf142b"/><path fill="none" stroke="#666" stroke-width="0.5" d="M2 1.5h2v1H2zm0 2h2v1H2zm1-2.5v3M1 2.5h4"/></svg></span></li>
+                <li><strong>Nationality:</strong> Maltese · MT <span class="residence-flag" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 8" width="18" height="12" role="img" aria-label="Malta"><rect width="6" height="8" fill="#fff"/><rect x="6" width="6" height="8" fill="#cf142b"/><path fill="none" stroke="#666" stroke-width="0.5" d="M2 1.5h2v1H2zm0 2h2v1H2zm1-2.5v3M1 2.5h4"/></svg></span></li>
             </ul>
         </section>
 
@@ -392,37 +379,47 @@
 
     <div class="logo-strip logo-strip-bottom" aria-hidden="true">
         <div class="logo-strip-inner">
-            <div class="logo-strip-track">
-            <img src="logos/tma.png" alt="" width="80" height="36">
-            <img src="logos/trustly.png" alt="" width="80" height="36">
-            <img src="logos/gig.png" alt="" width="80" height="36">
-            <img src="logos/netent.jpg" alt="" width="80" height="36">
-            <img src="logos/ra.jpg" alt="" width="80" height="36">
-            <img src="logos/rcg.jpg.png" alt="" width="80" height="36">
-            <img src="logos/rp.jpg" alt="" width="80" height="36">
-            <img src="logos/Vascas-Logo-.jpg" alt="" width="80" height="36">
-            <img src="logos/aws.png" alt="" width="80" height="36">
-            <img src="logos/gql.png" alt="" width="80" height="36">
-            <img src="logos/postman.png" alt="" width="80" height="36">
-            <img src="logos/JIRA.png" alt="" width="80" height="36">
-            <img src="logos/conf.svg" alt="" width="80" height="36">
-            <img src="logos/tma.png" alt="" width="80" height="36">
-            <img src="logos/trustly.png" alt="" width="80" height="36">
-            <img src="logos/gig.png" alt="" width="80" height="36">
-            <img src="logos/netent.jpg" alt="" width="80" height="36">
-            <img src="logos/ra.jpg" alt="" width="80" height="36">
-            <img src="logos/rcg.jpg.png" alt="" width="80" height="36">
-            <img src="logos/rp.jpg" alt="" width="80" height="36">
-            <img src="logos/Vascas-Logo-.jpg" alt="" width="80" height="36">
-            <img src="logos/aws.png" alt="" width="80" height="36">
-            <img src="logos/gql.png" alt="" width="80" height="36">
-            <img src="logos/postman.png" alt="" width="80" height="36">
-            <img src="logos/JIRA.png" alt="" width="80" height="36">
-            <img src="logos/conf.svg" alt="" width="80" height="36">
-            </div>
+            <div class="logo-strip-track" data-logo-strip></div>
         </div>
     </div>
 
+    <script>
+        (function () {
+            function shuffleArray(arr) {
+                var i = arr.length, j, t;
+                while (i) {
+                    j = Math.floor(Math.random() * i--);
+                    t = arr[i];
+                    arr[i] = arr[j];
+                    arr[j] = t;
+                }
+                return arr;
+            }
+            var tracks = document.querySelectorAll('.logo-strip-track[data-logo-strip]');
+            if (tracks.length < 2) return;
+            var firstTrack = tracks[0];
+            var imgs = [].slice.call(firstTrack.querySelectorAll('img'));
+            if (!imgs.length) return;
+            var items = imgs.map(function (img) {
+                return { src: img.getAttribute('src'), alt: img.getAttribute('alt') || '', w: img.getAttribute('width') || '80', h: img.getAttribute('height') || '36' };
+            });
+            var shuffled = shuffleArray(items.slice());
+            var duplicated = shuffled.concat(shuffled);
+            function fillTrack(track) {
+                track.innerHTML = '';
+                duplicated.forEach(function (item) {
+                    var img = document.createElement('img');
+                    img.src = item.src;
+                    img.alt = item.alt;
+                    img.width = item.w;
+                    img.height = item.h;
+                    track.appendChild(img);
+                });
+            }
+            fillTrack(firstTrack);
+            fillTrack(tracks[1]);
+        })();
+    </script>
     <script>
         (function () {
             var tracks = document.querySelectorAll('.logo-strip-track');

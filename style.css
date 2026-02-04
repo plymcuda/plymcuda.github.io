@@ -445,6 +445,18 @@ body {
     outline-offset: 2px;
 }
 
+.contact-section .residence-flag {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 2px;
+}
+
+.contact-section .residence-flag img {
+    height: 1em;
+    width: auto;
+    vertical-align: middle;
+}
+
 /* Work experience */
 .work-item {
     margin-bottom: 24px;
@@ -833,6 +845,74 @@ body {
     box-shadow: var(--shadow-hover);
 }
 
+.demo-card-title-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.demo-card-title-row .demo-card-title {
+    margin: 0;
+    flex: 1;
+}
+
+.demo-card-info-btn {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: var(--text-muted);
+    color: var(--card-bg);
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: help;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: background var(--transition), transform var(--transition);
+}
+
+.demo-card-info-btn:hover {
+    background: var(--accent);
+    transform: scale(1.1);
+}
+
+.demo-card-info-btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+.demo-card-info-tooltip {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 220px;
+    padding: 8px 10px;
+    background: var(--text);
+    color: var(--card-bg);
+    font-size: 0.8rem;
+    font-weight: 400;
+    line-height: 1.4;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-hover);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--transition), visibility var(--transition);
+    pointer-events: none;
+    z-index: 10;
+}
+
+.demo-card-info-btn:hover .demo-card-info-tooltip {
+    opacity: 1;
+    visibility: visible;
+}
+
 .demo-card-title {
     font-size: 1.1rem;
     font-weight: 600;
@@ -912,6 +992,51 @@ body {
 .demo-card-btn:disabled {
     opacity: 0.7;
     cursor: not-allowed;
+}
+
+.demo-card-btn--secondary {
+    background: transparent;
+    color: var(--accent);
+    border: 1px solid var(--border);
+}
+
+.demo-card-btn--secondary:hover:not(:disabled) {
+    background: rgba(0, 0, 0, 0.04);
+    border-color: var(--accent);
+}
+
+[data-theme="dark"] .demo-card-btn--secondary:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.demo-keypair-status {
+    font-size: 0.9rem;
+    margin-bottom: 12px;
+    min-height: 1.4em;
+    color: var(--text-muted);
+}
+
+.demo-keypair-status--done {
+    color: var(--text);
+}
+
+.demo-keypair-status--error {
+    color: var(--text);
+    font-style: italic;
+}
+
+.demo-keypair-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.demo-keypair-fingerprint {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 6px;
+    word-break: break-all;
 }
 
 .demo-result {

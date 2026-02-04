@@ -57,6 +57,12 @@ window.CV_DEMOS = [
     }
   },
   {
+    id: 'keypair',
+    title: 'Key pair generator (RSA · SHA-256)',
+    description: 'Generate RSA 256 Keys. Then Download them locally.',
+    type: 'keypair'
+  },
+  {
     id: 'malta-events',
     title: 'Malta: Earthquakes or Stormy days',
     description: 'Choose a dataset and how far back to search (1–10 years). User is also able to select from 5 - 20 results. Earthquakes: Malta region via EMSC (European-Mediterranean Seismological Centre); USGS used if EMSC is unavailable. Stormy days: Open-Meteo historical (wind + rain).',

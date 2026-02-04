@@ -130,12 +130,10 @@
     var limitSelect = document.createElement('select');
     limitSelect.id = 'malta-limit-' + demo.id;
     limitSelect.className = 'demo-malta-select';
-    limitSelect.setAttribute('aria-label', 'Maximum number of results');
     [5, 10, 15, 20].forEach(function (n) {
       var opt = document.createElement('option');
       opt.value = n;
       opt.textContent = n;
-      if (n === 5) opt.selected = true;
       limitSelect.appendChild(opt);
     });
     limitWrap.appendChild(limitSelect);
@@ -143,31 +141,10 @@
 
     card.appendChild(controls);
 
-    var requestSection = document.createElement('div');
-    requestSection.className = 'demo-request';
-    var requestLabel = document.createElement('span');
-    requestLabel.className = 'demo-section-label';
-    requestLabel.textContent = 'Request';
-    requestSection.appendChild(requestLabel);
-    var requestContent = document.createElement('pre');
-    requestContent.className = 'demo-request-content';
-    requestContent.textContent = 'Select dataset and years, then Run request.';
-    requestSection.appendChild(requestContent);
-    card.appendChild(requestSection);
-
-    var responseSection = document.createElement('div');
-    responseSection.className = 'demo-response';
-    var responseLabel = document.createElement('span');
-    responseLabel.className = 'demo-section-label';
-    responseLabel.textContent = 'Response';
-    responseSection.appendChild(responseLabel);
-    var resultWrap = document.createElement('div');
-    resultWrap.className = 'demo-result';
-    resultWrap.setAttribute('aria-live', 'polite');
-    resultWrap.setAttribute('aria-label', 'Response');
-    resultWrap.textContent = '— Run request to see response.';
-    responseSection.appendChild(resultWrap);
-    card.appendChild(responseSection);
+    var resultEl = document.createElement('div');
+    resultEl.className = 'demo-result';
+    resultEl.setAttribute('aria-live', 'polite');
+    card.appendChild(resultEl);
 
     var runBtn = document.createElement('button');
     runBtn.type = 'button';
@@ -176,180 +153,271 @@
     runBtn.setAttribute('aria-label', 'Run ' + demo.title);
     card.appendChild(runBtn);
 
-    slider.addEventListener('input', function () {
-      yearsVal.textContent = slider.value;
-    });
+    slider.addEventListener('input', function () { yearsVal.textContent = slider.value; });
+
+    function renderMaltaResult(resultEl, dataset, years, meta, text, useFallback) {
+      resultEl.classList.remove('loading', 'error');
+      resultEl.classList.add('done');
+      resultEl.textContent = '';
+      if (meta) {
+        var metaDiv = document.createElement('div');
+        metaDiv.className = 'demo-result-meta';
+        metaDiv.textContent = meta;
+        resultEl.appendChild(metaDiv);
+      }
+      var textDiv = document.createElement('div');
+      textDiv.className = 'demo-result-text';
+      textDiv.textContent = text;
+      resultEl.appendChild(textDiv);
+      if (dataset === 'earthquakes') {
+        var credit = document.createElement('p');
+        credit.className = 'demo-result-credit';
+        credit.appendChild(document.createTextNode('Malta: '));
+        var a1 = document.createElement('a');
+        a1.href = 'https://www.emsc-csem.org';
+        a1.target = '_blank';
+        a1.rel = 'noopener';
+        a1.textContent = 'SeismicPortal (EMSC)';
+        credit.appendChild(a1);
+        if (useFallback) credit.appendChild(document.createTextNode(' · USGS fallback'));
+        resultEl.appendChild(credit);
+      }
+    }
 
     runBtn.addEventListener('click', function () {
-      var resultEl = card.querySelector('.demo-result');
       if (!tryRecordDemoCall(demo.id).allowed) {
         showRateLimitMessage(resultEl);
         return;
       }
       var years = parseInt(slider.value, 10);
       var limit = parseInt(limitSelect.value, 10);
-      var dataset = card.querySelector('input[name="malta-dataset-' + demo.id + '"]:checked').value;
-      var end = new Date();
-      var start = new Date();
-      start.setFullYear(start.getFullYear() - years);
-      var startStr = start.toISOString().slice(0, 10);
-      var endStr = end.toISOString().slice(0, 10);
-
-      var emscUrl = 'https://www.seismicportal.eu/fdsnws/event/1/query?format=json&nodata=404&minlatitude=35.8&maxlatitude=36.05&minlongitude=14.1&maxlongitude=14.6&starttime=' + startStr + '&endtime=' + endStr + '&limit=' + limit + '&orderby=time';
-      var usgsUrl = 'https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minlatitude=35.8&maxlatitude=36.05&minlongitude=14.1&maxlongitude=14.6&starttime=' + startStr + '&endtime=' + endStr + '&limit=' + limit + '&orderby=time';
-
-      var url;
-      if (dataset === 'earthquakes') {
-        url = emscUrl;
-      } else {
-        url = 'https://archive-api.open-meteo.com/v1/archive?latitude=35.9&longitude=14.5&start_date=' + startStr + '&end_date=' + endStr + '&daily=precipitation_sum,wind_gusts_10m_max&timezone=Europe/Malta';
-      }
-
-      requestContent.textContent = 'GET ' + url;
-
+      var dataset = earthquakesRadio.checked ? 'earthquakes' : 'stormy';
       resultEl.textContent = '';
-      resultEl.classList.remove('error', 'done');
       resultEl.classList.add('loading');
+      resultEl.classList.remove('error', 'done');
       runBtn.disabled = true;
-      runBtn.textContent = 'Loading…';
 
-      function parseQuakeFeatures(data) {
-        var features = (data && data.features) || [];
-        return features.map(function (f, i) {
-          var p = f.properties || f;
-          var timeVal = p.time || p.Time;
-          var date = timeVal ? new Date(timeVal).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
-          var mag = p.mag != null ? p.mag : (p.Magnitude != null ? p.Magnitude : '—');
-          var place = (p.place || p.EventLocationName || p.flynn_region || p.title || '—').replace(/^[^,]*,\s*/, '');
-          return (i + 1) + '. ' + date + ' · Mag ' + mag + ' · ' + place;
-        }).join('\n');
-      }
-
-      function runEarthquakes(apiUrl, useFallback) {
-        return fetch(apiUrl)
-          .then(function (r) {
-            if (r.status === 204 || r.status === 404) return { features: [] };
-            if (!r.ok) throw new Error(r.status + ' ' + r.statusText);
-            return r.json();
-          })
+      if (dataset === 'stormy') {
+        var end = new Date();
+        var start = new Date();
+        start.setFullYear(start.getFullYear() - years);
+        var startStr = start.toISOString().slice(0, 10);
+        var endStr = end.toISOString().slice(0, 10);
+        var url = 'https://archive-api.open-meteo.com/v1/archive?latitude=35.9&longitude=14.5&start_date=' + startStr + '&end_date=' + endStr + '&daily=precipitation_sum,wind_gusts_10m_max&timezone=Europe/Malta';
+        fetch(url)
+          .then(function (r) { return r.json(); })
           .then(function (data) {
-            var features = (data && data.features) || [];
-            var text = features.length === 0
-              ? 'No earthquakes in this period for the Malta region.'
-              : parseQuakeFeatures(data);
-            var meta = 'Malta · last ' + years + ' year(s) · limit ' + limit + (useFallback ? ' (USGS)' : ' (EMSC)');
-            requestContent.textContent = 'GET ' + apiUrl;
-            renderMaltaResult(resultEl, dataset, years, meta, text, useFallback);
-          })
-          .catch(function (err) {
-            if (!useFallback && dataset === 'earthquakes') {
-              return runEarthquakes(usgsUrl, true);
+            if (!data || !data.daily || !data.daily.time) {
+              resultEl.classList.remove('loading');
+              resultEl.classList.add('done');
+              resultEl.textContent = 'No data for this period.';
+              return;
             }
+            var times = data.daily.time;
+            var precip = data.daily.precipitation_sum || [];
+            var wind = data.daily.wind_gusts_10m_max || [];
+            var scores = times.map(function (_, i) {
+              return { date: times[i], p: precip[i] || 0, w: wind[i] || 0, score: (precip[i] || 0) + (wind[i] || 0) * 0.5 };
+            });
+            scores.sort(function (a, b) { return b.score - a.score; });
+            var top = scores.slice(0, Math.min(limit, 5));
+            var text = top.length ? top.map(function (x) { return x.date + ': precip ' + x.p + ' mm, max wind ' + x.w + ' km/h'; }).join('\n') : 'No stormy days in range.';
+            var meta = 'Malta · last ' + years + ' year(s) · limit ' + limit;
+            resultEl.classList.remove('loading');
+            renderMaltaResult(resultEl, 'stormy', years, meta, text, false);
+          })
+          .catch(function () {
             resultEl.classList.remove('loading');
             resultEl.classList.add('error');
-            resultEl.textContent = 'Error: ' + (err.message || 'Request failed');
+            resultEl.textContent = 'Failed to fetch weather archive.';
           })
-          .then(function () {
-            runBtn.disabled = false;
-            runBtn.textContent = 'Run request';
-          });
-      }
-
-      function renderMaltaResult(resultEl, dataset, years, meta, text, useFallback) {
-        resultEl.classList.remove('loading');
-        resultEl.classList.add('done');
-        var metaEl = document.createElement('div');
-        metaEl.className = 'demo-result-meta';
-        metaEl.textContent = meta;
-        resultEl.appendChild(metaEl);
-        var textEl = document.createElement('div');
-        textEl.className = 'demo-result-text';
-        textEl.textContent = text;
-        resultEl.appendChild(textEl);
-        if (dataset === 'earthquakes') {
-          var credit = document.createElement('div');
-          credit.className = 'demo-result-credit';
-          var emscLink = document.createElement('a');
-          emscLink.href = 'https://www.emsc-csem.org';
-          emscLink.target = '_blank';
-          emscLink.rel = 'noopener';
-          emscLink.textContent = 'EMSC';
-          credit.appendChild(document.createTextNode('Data: '));
-          credit.appendChild(emscLink);
-          credit.appendChild(document.createTextNode(' · Malta: '));
-          var smrgLink = document.createElement('a');
-          smrgLink.href = 'https://seismic.research.um.edu.mt';
-          smrgLink.target = '_blank';
-          smrgLink.rel = 'noopener';
-          smrgLink.textContent = 'SMRG';
-          credit.appendChild(smrgLink);
-          credit.appendChild(document.createTextNode(' · '));
-          var eqTrackLink = document.createElement('a');
-          eqTrackLink.href = 'https://earthquaketrack.com/p/malta/recent';
-          eqTrackLink.target = '_blank';
-          eqTrackLink.rel = 'noopener';
-          eqTrackLink.textContent = 'Earthquake Track';
-          credit.appendChild(eqTrackLink);
-          resultEl.appendChild(credit);
-        }
-      }
-
-      if (dataset === 'earthquakes') {
-        runEarthquakes(emscUrl, false);
+          .then(function () { runBtn.disabled = false; });
         return;
       }
 
-      fetch(url)
-        .then(function (r) {
-          if (!r.ok) throw new Error(r.status + ' ' + r.statusText);
-          return r.json();
-        })
+      var start = new Date();
+      start.setFullYear(start.getFullYear() - years);
+      var startStr = start.toISOString().slice(0, 10).replace(/-/g, '');
+      var emscUrl = 'https://www.seismicportal.eu/fdsnws/event/1/query?format=json&limit=' + limit + '&minlat=35&maxlat=36&minlon=14&maxlon=16&start=' + startStr;
+      fetch(emscUrl)
+        .then(function (r) { return r.json(); })
         .then(function (data) {
-          var daily = data.daily;
-          var text;
-          var meta = 'Malta · last ' + years + ' year(s) · limit ' + limit;
-          if (!daily || !daily.time || !daily.time.length) {
-            text = 'No daily data for this period.';
-          } else {
-            var days = daily.time.map(function (t, i) {
-              return {
-                date: t,
-                precip: daily.precipitation_sum && daily.precipitation_sum[i] != null ? daily.precipitation_sum[i] : 0,
-                wind: daily.wind_gusts_10m_max && daily.wind_gusts_10m_max[i] != null ? daily.wind_gusts_10m_max[i] : 0
-              };
-            });
-            days.sort(function (a, b) {
-              var scoreA = a.precip + (a.wind || 0) / 10;
-              var scoreB = b.precip + (b.wind || 0) / 10;
-              return scoreB - scoreA;
-            });
-            var topN = days.slice(0, limit);
-            text = topN.length === 0 ? 'No data.' : topN.map(function (d, i) {
-              var dateStr = d.date;
-              try { dateStr = new Date(d.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }); } catch (e) {}
-              return (i + 1) + '. ' + dateStr + ' · ' + (d.precip != null ? d.precip.toFixed(1) : '0') + ' mm rain · ' + (d.wind != null ? Math.round(d.wind) : '—') + ' km/h gusts';
-            }).join('\n');
-          }
-          resultEl.classList.remove('loading');
-          resultEl.classList.add('done');
-          var metaEl = document.createElement('div');
-          metaEl.className = 'demo-result-meta';
-          metaEl.textContent = meta;
-          resultEl.appendChild(metaEl);
-          var textEl = document.createElement('div');
-          textEl.className = 'demo-result-text';
-          textEl.textContent = text;
-          resultEl.appendChild(textEl);
+          var events = Array.isArray(data) ? data : (data && data.events) ? data.events : [];
+          var text = events.length ? events.slice(0, limit).map(function (e) {
+            var mag = e.mag !== undefined ? e.mag : (e.magnitude && e.magnitude.value) ? e.magnitude.value : '—';
+            var time = e.time || e.originTime || e.datetime || '—';
+            var loc = (e.location || e.place || e.region || '').trim() || '—';
+            return time + ' M' + mag + ' ' + loc;
+          }).join('\n') : '';
+          var useFallback = false;
+          if (!text && events.length === 0) throw new Error('EMSC empty');
+          renderMaltaResult(resultEl, 'earthquakes', years, 'Malta · last ' + years + ' year(s) · limit ' + limit + ' (EMSC)', text || 'No earthquakes in this period for the Malta region.', useFallback);
         })
-        .catch(function (err) {
+        .catch(function () {
+          var usgsUrl = 'https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&limit=' + limit + '&minlatitude=35&maxlatitude=36&minlongitude=14&maxlongitude=16&starttime=' + start.toISOString();
+          return fetch(usgsUrl).then(function (r) { return r.json(); }).then(function (geo) {
+            var features = (geo && geo.features) ? geo.features : [];
+            var text = features.length ? features.map(function (f) {
+              var p = f.properties || {};
+              var mag = p.mag != null ? p.mag : '—';
+              var time = p.time ? new Date(p.time).toISOString() : '—';
+              var loc = (p.place || '').trim() || '—';
+              return time + ' M' + mag + ' ' + loc;
+            }).join('\n') : 'No earthquakes in this period for the Malta region.';
+            renderMaltaResult(resultEl, 'earthquakes', years, 'Malta · last ' + years + ' year(s) · limit ' + limit + ' (USGS)', text, true);
+          });
+        })
+        .catch(function () {
           resultEl.classList.remove('loading');
           resultEl.classList.add('error');
-          resultEl.textContent = 'Error: ' + (err.message || 'Request failed');
+          resultEl.textContent = 'Could not load earthquake data (EMSC or USGS).';
         })
-        .then(function () {
-          runBtn.disabled = false;
-          runBtn.textContent = 'Run request';
+        .then(function () { runBtn.disabled = false; });
+    });
+
+    return card;
+  }
+
+  function buildKeypairCard(demo) {
+    var card = document.createElement('div');
+    card.className = 'demo-card demo-card--keypair';
+    card.setAttribute('data-demo', demo.id);
+
+    var titleRow = document.createElement('div');
+    titleRow.className = 'demo-card-title-row';
+    var title = document.createElement('h4');
+    title.className = 'demo-card-title';
+    title.textContent = demo.title;
+    titleRow.appendChild(title);
+    var infoBtn = document.createElement('button');
+    infoBtn.type = 'button';
+    infoBtn.className = 'demo-card-info-btn';
+    infoBtn.setAttribute('aria-label', 'What does this do?');
+    infoBtn.innerHTML = '<span aria-hidden="true">&#8505;</span><span class="demo-card-info-tooltip">The keys are generated safely locally in your browser.</span>';
+    titleRow.appendChild(infoBtn);
+    card.appendChild(titleRow);
+
+    var desc = document.createElement('p');
+    desc.className = 'demo-card-desc';
+    desc.textContent = demo.description;
+    card.appendChild(desc);
+
+    var keypairState = { privatePem: null, publicPem: null, fingerprint: null };
+
+    function arrayBufferToBase64(buf) {
+      var bytes = new Uint8Array(buf);
+      var bin = '';
+      for (var i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+      return typeof btoa !== 'undefined' ? btoa(bin) : '';
+    }
+
+    function toPem(label, derBase64) {
+      var lines = [];
+      for (var i = 0; i < derBase64.length; i += 64) lines.push(derBase64.slice(i, i + 64));
+      return '-----BEGIN ' + label + '-----\n' + lines.join('\n') + '\n-----END ' + label + '-----';
+    }
+
+    function sha256Fingerprint(buf) {
+      return crypto.subtle.digest('SHA-256', buf).then(function (hash) {
+        var bytes = new Uint8Array(hash);
+        var hex = '';
+        for (var i = 0; i < bytes.length; i++) hex += ('0' + bytes[i].toString(16)).slice(-2);
+        return hex.match(/.{1,2}/g).join(':');
+      });
+    }
+
+    var statusEl = document.createElement('div');
+    statusEl.className = 'demo-keypair-status';
+    statusEl.setAttribute('aria-live', 'polite');
+    card.appendChild(statusEl);
+
+    var btnWrap = document.createElement('div');
+    btnWrap.className = 'demo-keypair-buttons';
+
+    var genBtn = document.createElement('button');
+    genBtn.type = 'button';
+    genBtn.className = 'demo-card-btn';
+    genBtn.textContent = 'Generate key pair';
+    genBtn.setAttribute('aria-label', 'Generate RSA key pair');
+    btnWrap.appendChild(genBtn);
+
+    var dlPrivate = document.createElement('button');
+    dlPrivate.type = 'button';
+    dlPrivate.className = 'demo-card-btn demo-card-btn--secondary';
+    dlPrivate.textContent = 'Download Private Key';
+    dlPrivate.setAttribute('aria-label', 'Download private key as PEM file');
+    dlPrivate.disabled = true;
+    btnWrap.appendChild(dlPrivate);
+
+    var dlPublic = document.createElement('button');
+    dlPublic.type = 'button';
+    dlPublic.className = 'demo-card-btn demo-card-btn--secondary';
+    dlPublic.textContent = 'Download Public Key';
+    dlPublic.setAttribute('aria-label', 'Download public key as PEM file');
+    dlPublic.disabled = true;
+    btnWrap.appendChild(dlPublic);
+
+    card.appendChild(btnWrap);
+
+    genBtn.addEventListener('click', function () {
+      if (!window.crypto || !crypto.subtle) {
+        statusEl.textContent = 'Web Crypto API is not available in this browser.';
+        statusEl.className = 'demo-keypair-status demo-keypair-status--error';
+        return;
+      }
+      statusEl.textContent = 'Generating…';
+      statusEl.className = 'demo-keypair-status';
+      genBtn.disabled = true;
+
+      crypto.subtle.generateKey(
+        { name: 'RSA-OAEP', modulusLength: 2048, publicExponent: new Uint8Array([1, 0, 1]), hash: 'SHA-256' },
+        true,
+        ['encrypt', 'decrypt']
+      ).then(function (keyPair) {
+        return Promise.all([
+          crypto.subtle.exportKey('pkcs8', keyPair.privateKey),
+          crypto.subtle.exportKey('spki', keyPair.publicKey)
+        ]).then(function (exports) {
+          var privateDer = exports[0];
+          var publicDer = exports[1];
+          keypairState.privatePem = toPem('PRIVATE KEY', arrayBufferToBase64(privateDer));
+          keypairState.publicPem = toPem('PUBLIC KEY', arrayBufferToBase64(publicDer));
+          return sha256Fingerprint(publicDer).then(function (fp) {
+            keypairState.fingerprint = fp;
+          });
         });
+      }).then(function () {
+        statusEl.className = 'demo-keypair-status demo-keypair-status--done';
+        statusEl.innerHTML = '';
+        statusEl.appendChild(document.createTextNode('Key pair generated. Store the private key securely. '));
+        var fpSpan = document.createElement('span');
+        fpSpan.className = 'demo-keypair-fingerprint';
+        fpSpan.textContent = 'SHA-256 fingerprint: ' + keypairState.fingerprint;
+        statusEl.appendChild(fpSpan);
+        dlPrivate.disabled = false;
+        dlPublic.disabled = false;
+      }).catch(function (err) {
+        statusEl.className = 'demo-keypair-status demo-keypair-status--error';
+        statusEl.textContent = 'Error: ' + (err.message || 'Key generation failed');
+      }).then(function () {
+        genBtn.disabled = false;
+      });
+    });
+
+    function downloadPem(filename, pem) {
+      var blob = new Blob([pem], { type: 'application/x-pem-file' });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    dlPrivate.addEventListener('click', function () {
+      if (keypairState.privatePem) downloadPem('private-key.pem', keypairState.privatePem);
+    });
+    dlPublic.addEventListener('click', function () {
+      if (keypairState.publicPem) downloadPem('public-key.pem', keypairState.publicPem);
     });
 
     return card;
@@ -358,6 +426,10 @@
   demos.forEach(function (demo) {
     if (demo.type === 'malta-events') {
       container.appendChild(buildMaltaEventsCard(demo));
+      return;
+    }
+    if (demo.type === 'keypair') {
+      container.appendChild(buildKeypairCard(demo));
       return;
     }
 
