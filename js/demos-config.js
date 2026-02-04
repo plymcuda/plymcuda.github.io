@@ -6,7 +6,7 @@ window.CV_DEMOS = [
   {
     id: 'weather',
     title: 'Weather API (Open-Meteo)',
-    description: 'REST GET – current weather for a location. Same family of APIs we use for the sidebar.',
+    description: 'This obtains current weather for Malta.',
     type: 'rest',
     url: 'https://api.open-meteo.com/v1/forecast?latitude=35.8997&longitude=14.5147&current=temperature_2m,weather_code,wind_speed_10m&timezone=Europe/Malta',
     method: 'GET',
@@ -21,24 +21,24 @@ window.CV_DEMOS = [
     }
   },
   {
-    id: 'rest-post',
-    title: 'REST API (JSONPlaceholder)',
-    description: 'REST GET – fetch a sample post. Useful for testing integrations and Postman flows.',
+    id: 'rest-quote',
+    title: 'REST API (Random quote)',
+    description: 'A simple REST request fetching data from an existing database. Returns a random quote — content and author.',
     type: 'rest',
-    url: 'https://jsonplaceholder.typicode.com/posts/1',
+    url: 'https://api.quotable.io/random',
     method: 'GET',
     format: function (data) {
-      if (!data) return { text: 'No data', meta: null };
+      if (!data || !data.content) return { text: 'No data', meta: null };
       return {
-        text: data.body || '',
-        meta: 'Post #' + (data.id || '') + ': ' + (data.title || '')
+        text: data.content,
+        meta: data.author ? '— ' + data.author : null
       };
     }
   },
   {
     id: 'graphql',
     title: 'GraphQL (Countries API)',
-    description: 'GraphQL query – fetch country by code. Similar pattern to GQL schema exploration.',
+    description: 'Fetches country by code using GQL.',
     type: 'graphql',
     url: 'https://countries.trevorblades.com/graphql',
     method: 'POST',
