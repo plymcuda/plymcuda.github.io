@@ -153,6 +153,11 @@
     runBtn.setAttribute('aria-label', 'Run ' + demo.title);
     card.appendChild(runBtn);
 
+    var maltaRef = document.createElement('div');
+    maltaRef.className = 'demo-card-reference';
+    maltaRef.textContent = 'EMSC, USGS, Open-Meteo';
+    card.appendChild(maltaRef);
+
     slider.addEventListener('input', function () { yearsVal.textContent = slider.value; });
 
     function renderMaltaResult(resultEl, dataset, years, meta, text, useFallback) {
@@ -359,6 +364,11 @@
 
     card.appendChild(btnWrap);
 
+    var keypairRef = document.createElement('div');
+    keypairRef.className = 'demo-card-reference';
+    keypairRef.textContent = 'Web Crypto API';
+    card.appendChild(keypairRef);
+
     genBtn.addEventListener('click', function () {
       if (!window.crypto || !crypto.subtle) {
         statusEl.textContent = 'Web Crypto API is not available in this browser.';
@@ -479,6 +489,20 @@
     runBtn.textContent = 'Run request';
     runBtn.setAttribute('aria-label', 'Run ' + demo.title);
     card.appendChild(runBtn);
+
+    if (demo.url) {
+      var refDiv = document.createElement('div');
+      refDiv.className = 'demo-card-reference';
+      try {
+        var refLink = document.createElement('a');
+        refLink.href = demo.url;
+        refLink.target = '_blank';
+        refLink.rel = 'noopener';
+        refLink.textContent = demo.url.replace(/^https?:\/\//, '').split('/')[0];
+        refDiv.appendChild(refLink);
+      } catch (e) {}
+      card.appendChild(refDiv);
+    }
 
     runBtn.addEventListener('click', function () {
       var resultEl = card.querySelector('.demo-result');

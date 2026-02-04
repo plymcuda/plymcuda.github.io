@@ -80,6 +80,12 @@
             </ul>
         </section>
 
+        <div class="cv-expand-controls" role="group" aria-label="Expand or collapse all sections">
+            <button type="button" class="cv-expand-all-btn">Expand all</button>
+            <span class="cv-expand-sep" aria-hidden="true">·</span>
+            <button type="button" class="cv-collapse-all-btn">Collapse all</button>
+        </div>
+
         <section class="cv-section cv-section-collapsible">
             <div class="section-summary" role="button" tabindex="0" aria-expanded="false">
                 <h2>Work experience</h2>
@@ -370,8 +376,7 @@
             </div>
             <div class="demos-section-content">
                 <h2 class="demos-heading" id="demos-heading-content">API &amp; integration demos</h2>
-                <p class="demos-intro">Dear user, thanks for visiting this link. Here are some demos for you to try — simple interactions you can trigger and explore. See if you can understand what&rsquo;s going on.</p>
-                <p class="demos-summary">Click &ldquo;Run request&rdquo; to call live APIs (REST and GraphQL). Each demo shows the request and response.</p>
+                <p class="demos-intro">The following demos use publicly available data and allow one to experiment with. This section shows the requests sent and responses received.</p>
                 <div id="demos-container" class="demos-container"></div>
             </div>
         </div>
@@ -474,6 +479,39 @@
                 }
             });
         });
+
+        (function () {
+            var expandBtn = document.querySelector('.cv-expand-all-btn');
+            var collapseBtn = document.querySelector('.cv-collapse-all-btn');
+            var cv = document.querySelector('.cv');
+            if (!cv) return;
+            function expandAll() {
+                cv.querySelectorAll('.cv-section-collapsible').forEach(function (section) {
+                    section.classList.add('is-expanded');
+                    var sum = section.querySelector('.section-summary');
+                    if (sum) sum.setAttribute('aria-expanded', 'true');
+                });
+                cv.querySelectorAll('.work-item').forEach(function (item) {
+                    item.classList.add('is-expanded');
+                    var sum = item.querySelector('.work-summary');
+                    if (sum) sum.setAttribute('aria-expanded', 'true');
+                });
+            }
+            function collapseAll() {
+                cv.querySelectorAll('.cv-section-collapsible').forEach(function (section) {
+                    section.classList.remove('is-expanded');
+                    var sum = section.querySelector('.section-summary');
+                    if (sum) sum.setAttribute('aria-expanded', 'false');
+                });
+                cv.querySelectorAll('.work-item').forEach(function (item) {
+                    item.classList.remove('is-expanded');
+                    var sum = item.querySelector('.work-summary');
+                    if (sum) sum.setAttribute('aria-expanded', 'false');
+                });
+            }
+            if (expandBtn) expandBtn.addEventListener('click', expandAll);
+            if (collapseBtn) collapseBtn.addEventListener('click', collapseAll);
+        })();
 
         (function () {
             var demosSection = document.getElementById('api-demos');
