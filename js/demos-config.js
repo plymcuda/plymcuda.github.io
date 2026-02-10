@@ -25,7 +25,7 @@ window.CV_DEMOS = [
     title: 'REST API (Random quote)',
     description: 'A simple REST request fetching data from an existing database. Returns a random quote — content and author.',
     type: 'rest',
-    url: 'https://api.quotable.io/quotes/random',
+    url: 'https://api.quotable.io/random',
     method: 'GET',
     format: function (data) {
       var quote = Array.isArray(data) && data.length ? data[0] : data;
