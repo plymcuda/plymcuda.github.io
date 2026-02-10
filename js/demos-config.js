@@ -21,18 +21,18 @@ window.CV_DEMOS = [
     }
   },
   {
-    id: 'rest-quote',
-    title: 'REST API (Random quote)',
-    description: 'A simple REST request fetching data from an existing database. Returns a random quote — content and author.',
+    id: 'rest-dog',
+    title: 'REST API (Random dog)',
+    description: 'A simple REST request. Fetches a random dog image from a public API — each run returns a new photo.',
     type: 'rest',
-    url: 'https://api.quotable.io/random',
+    url: 'https://dog.ceo/api/breeds/image/random',
     method: 'GET',
     format: function (data) {
-      var quote = Array.isArray(data) && data.length ? data[0] : data;
-      if (!quote || !quote.content) return { text: 'No data', meta: null };
+      if (!data || !data.message) return { text: 'No data', meta: null };
       return {
-        text: quote.content,
-        meta: quote.author ? '— ' + quote.author : null
+        text: 'Random dog image',
+        meta: 'dog.ceo/api',
+        imageUrl: data.message
       };
     }
   },

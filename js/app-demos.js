@@ -4,21 +4,61 @@
   if (!demos || !container) return;
 
   var rateLimitState = {};
+  var globalTimestamps = [];
+  var globalCooldownUntil = 0;
   var RATE_LIMIT_MSG = 'Thanks for trying this out — we hope it was interesting. Feel free to reach out or contact me.';
+  var RATE_LIMIT_STORAGE_KEY = 'cv-demos-ratelimit';
+  var PER_DEMO_CAP = 5;
+  var GLOBAL_CAP = 12;
+  var WINDOW_MS = 60000;
+  var COOLDOWN_MS = 13 * 60 * 1000;
+
+  function loadRateLimitState() {
+    try {
+      var raw = sessionStorage.getItem(RATE_LIMIT_STORAGE_KEY);
+      if (!raw) return;
+      var parsed = JSON.parse(raw);
+      if (parsed.state && typeof parsed.state === 'object') rateLimitState = parsed.state;
+      if (Array.isArray(parsed.globalTimestamps)) globalTimestamps = parsed.globalTimestamps;
+      if (typeof parsed.globalCooldownUntil === 'number') globalCooldownUntil = parsed.globalCooldownUntil;
+    } catch (e) {}
+  }
+
+  function saveRateLimitState() {
+    try {
+      sessionStorage.setItem(RATE_LIMIT_STORAGE_KEY, JSON.stringify({
+        state: rateLimitState,
+        globalTimestamps: globalTimestamps,
+        globalCooldownUntil: globalCooldownUntil
+      }));
+    } catch (e) {}
+  }
 
   function tryRecordDemoCall(demoId) {
     var now = Date.now();
+    if (globalCooldownUntil && now < globalCooldownUntil) { saveRateLimitState(); return { allowed: false }; }
     if (!rateLimitState[demoId]) rateLimitState[demoId] = { timestamps: [], cooldownUntil: 0 };
     var s = rateLimitState[demoId];
-    if (now < s.cooldownUntil) return { allowed: false };
-    s.timestamps = s.timestamps.filter(function (t) { return now - t < 60000; });
-    if (s.timestamps.length >= 5) {
-      s.cooldownUntil = now + 13 * 60 * 1000;
+    if (now < s.cooldownUntil) { saveRateLimitState(); return { allowed: false }; }
+    globalTimestamps = globalTimestamps.filter(function (t) { return now - t < WINDOW_MS; });
+    if (globalTimestamps.length >= GLOBAL_CAP) {
+      globalCooldownUntil = now + COOLDOWN_MS;
+      saveRateLimitState();
+      return { allowed: false };
+    }
+    s.timestamps = s.timestamps.filter(function (t) { return now - t < WINDOW_MS; });
+    if (s.timestamps.length >= PER_DEMO_CAP) {
+      s.cooldownUntil = now + COOLDOWN_MS;
+      saveRateLimitState();
       return { allowed: false };
     }
     s.timestamps.push(now);
+    globalTimestamps.push(now);
+    saveRateLimitState();
     return { allowed: true };
   }
+
+  loadRateLimitState();
 
   function showRateLimitMessage(resultEl) {
     resultEl.classList.remove('loading', 'error');
@@ -370,6 +410,11 @@
     card.appendChild(keypairRef);
 
     genBtn.addEventListener('click', function () {
+      if (!tryRecordDemoCall(demo.id).allowed) {
+        statusEl.textContent = RATE_LIMIT_MSG;
+        statusEl.className = 'demo-keypair-status demo-keypair-status--rate-limited';
+        return;
+      }
       if (!window.crypto || !crypto.subtle) {
         statusEl.textContent = 'Web Crypto API is not available in this browser.';
         statusEl.className = 'demo-keypair-status demo-keypair-status--error';
@@ -520,10 +565,13 @@
       if (demo.headers) opts.headers = demo.headers;
       if (demo.body) opts.body = demo.body;
 
-      fetch(demo.url, opts)
+      var fetchUrl = demo.fetchUrl || demo.url;
+      var getData = demo.getData || function (r) { return r.json(); };
+
+      fetch(fetchUrl, opts)
         .then(function (r) {
           if (!r.ok) throw new Error(r.status + ' ' + r.statusText);
-          return r.json();
+          return getData(r);
         })
         .then(function (data) {
           var out = demo.format ? demo.format(data) : { text: JSON.stringify(data, null, 2), meta: null };
@@ -534,6 +582,16 @@
             meta.className = 'demo-result-meta';
             meta.textContent = out.meta;
             resultEl.appendChild(meta);
+          }
+          if (out.imageUrl) {
+            var imgWrap = document.createElement('div');
+            imgWrap.className = 'demo-result-image-wrap';
+            var img = document.createElement('img');
+            img.src = out.imageUrl;
+            img.alt = out.text || 'API image';
+            img.className = 'demo-result-image';
+            imgWrap.appendChild(img);
+            resultEl.appendChild(imgWrap);
           }
           var text = document.createElement('div');
           text.className = 'demo-result-text';

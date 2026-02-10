@@ -454,23 +454,26 @@
             var tracks = document.querySelectorAll('.logo-strip-track');
             if (!tracks.length) return;
             var baseDuration = 40;
-            function setStripSpeed(pxPerSec) {
+            function setStripSpeed(pxPerSec, reverse) {
                 var dur = Math.max(10, 8000 / (pxPerSec || 80));
-                tracks.forEach(function (el) { el.style.animationDuration = dur + 's'; });
+                tracks.forEach(function (el) {
+                    el.style.animationDuration = dur + 's';
+                    el.style.animationDirection = reverse ? 'reverse' : 'normal';
+                });
             }
             window.addEventListener('mousemove', function (e) {
                 var w = window.innerWidth;
                 if (!w) return;
                 var x = e.touches ? e.touches[0].clientX : e.clientX;
                 var factor = (x / w - 0.5) * 2;
-                setStripSpeed(80 + factor * 60);
+                setStripSpeed(80 + factor * 60, factor > 0);
             }, { passive: true });
             window.addEventListener('touchmove', function (e) {
                 var w = window.innerWidth;
                 if (!w || !e.touches.length) return;
                 var x = e.touches[0].clientX;
                 var factor = (x / w - 0.5) * 2;
-                setStripSpeed(80 + factor * 60);
+                setStripSpeed(80 + factor * 60, factor > 0);
             }, { passive: true });
         })();
 
@@ -570,13 +573,27 @@
 
             var weatherEl = document.getElementById('malta-weather');
             if (weatherEl) {
+                var WEATHER_CACHE_KEY = 'cv-weather';
+                var WEATHER_CACHE_MS = 5 * 60 * 1000;
+                try {
+                    var cached = sessionStorage.getItem(WEATHER_CACHE_KEY);
+                    if (cached) {
+                        var obj = JSON.parse(cached);
+                        if (obj && typeof obj.at === 'number' && (Date.now() - obj.at) < WEATHER_CACHE_MS && obj.text) {
+                            weatherEl.textContent = obj.text;
+                            return;
+                        }
+                    }
+                } catch (e) {}
                 fetch('https://api.open-meteo.com/v1/forecast?latitude=35.8997&longitude=14.5147&current=temperature_2m,weather_code&timezone=Europe/Malta')
                     .then(function (r) { return r.json(); })
                     .then(function (data) {
                         var temp = data.current && data.current.temperature_2m;
                         var code = data.current && data.current.weather_code;
                         var desc = code === 0 ? 'Clear' : code <= 3 ? 'Cloudy' : code <= 49 ? 'Fog' : code <= 67 ? 'Rain' : code <= 82 ? 'Snow' : 'Thunder';
-                        weatherEl.textContent = (temp != null ? Math.round(temp) + '°C · ' : '') + desc;
+                        var text = (temp != null ? Math.round(temp) + '°C · ' : '') + desc;
+                        weatherEl.textContent = text;
+                        try { sessionStorage.setItem(WEATHER_CACHE_KEY, JSON.stringify({ text: text, at: Date.now() })); } catch (e) {}
                     })
                     .catch(function () { weatherEl.textContent = '—'; });
             }

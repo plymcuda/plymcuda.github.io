@@ -1089,6 +1089,11 @@ body {
     font-style: italic;
 }
 
+.demo-keypair-status--rate-limited {
+    color: var(--text-muted);
+    font-style: italic;
+}
+
 .demo-keypair-buttons {
     display: flex;
     flex-wrap: wrap;
@@ -1131,6 +1136,19 @@ body {
     white-space: pre-wrap;
     word-break: break-word;
     color: var(--text);
+}
+
+.demo-result-image-wrap {
+    margin: 10px 0;
+}
+
+.demo-result-image {
+    display: block;
+    max-width: 100%;
+    width: 200px;
+    height: auto;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
 }
 
 .demo-result-credit {
