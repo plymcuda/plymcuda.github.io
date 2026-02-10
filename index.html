@@ -3,15 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        (function () {
+            var stored = localStorage.getItem('theme');
+            var theme = (stored === 'dark' || stored === 'light') ? stored : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            if (theme === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+            else document.documentElement.removeAttribute('data-theme');
+        })();
+    </script>
     <title>Steve Cutajar | Lead Partner Integration Specialist · CV</title>
     <meta name="description" content="Steve Cutajar – Lead Partner Integration Specialist. Technical documentation, process improvement. Based in Malta. Work experience in iGaming, integrations, and partner onboarding.">
+    <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://stevecutajar.com/">
     <meta property="og:title" content="Steve Cutajar | Lead Partner Integration Specialist · CV">
     <meta property="og:description" content="Lead Partner Integration Specialist. Technical documentation, process improvement. Based in Malta.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://stevecutajar.com/">
     <meta property="og:image" content="https://stevecutajar.com/profile.jpg">
+    <meta property="og:image:width" content="160">
+    <meta property="og:image:height" content="160">
     <meta property="og:locale" content="en_GB">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Steve Cutajar | Lead Partner Integration Specialist · CV">
+    <meta name="twitter:description" content="Lead Partner Integration Specialist. Technical documentation, process improvement. Based in Malta.">
+    <meta name="twitter:image" content="https://stevecutajar.com/profile.jpg">
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -22,6 +37,15 @@
       "sameAs": ["https://www.linkedin.com/in/stevecutajar/"],
       "address": { "@type": "PostalAddress", "addressLocality": "Malta" },
       "description": "Lead Partner Integration Specialist. Technical documentation, process improvement. Work experience in iGaming, integrations, and partner onboarding."
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Steve Cutajar – CV",
+      "url": "https://stevecutajar.com/",
+      "author": { "@type": "Person", "name": "Steve Cutajar" }
     }
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
